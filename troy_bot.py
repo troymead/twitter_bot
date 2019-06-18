@@ -10,8 +10,13 @@ from spotipy.oauth2 import SpotifyClientCredentials
 from credentials import *
 
 # set up OAuth and integrate with API; twitter
-auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-auth.set_access_token(access_token, access_secret)
+# auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+# auth.set_access_token(access_token, access_token_secret)
+# api = tweepy.API(auth)
+
+# set up OAuth and integrate with API; twitter test
+auth = tweepy.OAuthHandler(test_consumer_key, test_consumer_secret)
+auth.set_access_token(test_access_token, test_access_secret)
 api = tweepy.API(auth)
 
 # Spotify set up
@@ -23,7 +28,7 @@ playlist_id = uri.split(':')[4]
 results = sp.user_playlist(username, playlist_id)
 
 # file handling - list of already tweeted songs
-tweeted_path = os.path.join(os.getcwd(), 'already_tweeted.txt')
+tweeted_path = os.path.join(os.getcwd(), 'already_tweeted_test.txt')
 if os.path.exists(tweeted_path):
     tweeted_file = open(tweeted_path, 'a')
 else:
@@ -34,7 +39,7 @@ else:
 tweet = 'Song of the Day: '
 api.update_status(status=tweet)
 already_tweeted = []
-tweeted_txt = open('already_tweeted.txt', '')
+tweeted_txt = open('already_tweeted_test.txt', '')
 
 # time sleep for later use
 # time.sleep(86400)
