@@ -41,8 +41,11 @@ api.update_status(status=tweet)
 already_tweeted = []
 tweeted_txt = open('already_tweeted_test.txt', '')
 
-# time sleep for later use
+# time sleep for final product
 # time.sleep(86400)
+
+# time sleep for testing
+time.sleep(1800)
 
 # function to send tweet of a song
 # tweets song name, artist, and link to the song on Spotify
@@ -75,8 +78,12 @@ def get_song(results):
         print(track['name'] + ' - ' + track['artists'][0]['name'])
         new_tweet = track['name'] + ' - ' + track['artists'][0]['name']
 
+def already_tweeted(track):
+    if track[]
+
 def main():
-    return 0
+    print(get_random_song(results))
+    #return 0
 
 if __name__ == '__main__':
     main()
