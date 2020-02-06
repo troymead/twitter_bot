@@ -10,7 +10,9 @@ import spotipy.util as util
 from spotipy.oauth2 import SpotifyClientCredentials
 from credentials import *
 
-# TODO: need to add check to see if all songs have been tweeted; might have to loop through and count - would take too long to do
+# TODO: need to add check to see if all songs have been tweeted
+# TODO: check to see if correct statement is printed when end of playlist is reached
+# might test above with short playlist (2-3 songs max)
 # TODO: figure out if script needs to be hosted or in venv to run continuously
 # TODO: finish this damn bot...
 
@@ -38,18 +40,10 @@ class SpotifyTwitterBot:
     song_counter = 0
 
     FIELD_NAMES = ['song_title', 'song_uri']
-    PLAYLIST_LENGTH = 152 # probably won't use this
 
     def __init__(self, tweeted_file, twitter_playlist):
         self.tweeted_file = tweeted_file
         self.twitter_playlist = twitter_playlist
-
-    # def playlist_end(self):
-    #     reader_count = 0
-    #     if os.path.isfile(self.tweeted_file):
-    #         tweeted_reader = csv.DictReader(open(self.tweered_file), delimiter=',')
-    #         for row in tweeted_reader:
-    #             reader_count += 1
             
     # method to check if song has been tweeted
     # checks with csv that contains list of already tweeted songs
@@ -114,9 +108,10 @@ def main():
 
     # hopefully this will be the loop that allows the bot to tweet once per day
     # until all songs have been tweeted
-    # while True:
+    # while bot1.song_counter < twitter_playlist['tracks']['total']:
     #     bot1.get_random_song() # testing
     #     time.sleep(interval)
+    
 
 
 if __name__ == '__main__':
