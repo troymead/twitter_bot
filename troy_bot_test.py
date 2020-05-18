@@ -6,119 +6,116 @@ import random
 import csv
 import tweepy
 import spotipy
+from spotipy import oauth2
 import spotipy.util as util
 from spotipy.oauth2 import SpotifyClientCredentials
 from credentials import *
 
+# for heroku integration
+# from os import environ
+# CONSUMER_KEY = environ['CONSUMER_KEY']
+# CONSUMER_SECRET = environ['CONSUMER_SECRET']
+# ACCESS_TOKEN = environ['ACCESS_TOKEN']
+# ACCESS_TOKEN_SECRET = environ['ACCESS_TOKEN_SECRET']
+# SPOTIFY_CLIENT_ID = environ['SPOTIFY_CLIENT_ID']
+# SPOTIFY_CLIENT_SECRET = environ['SPOTIFY_CLIENT_SECRET']
+
 # TODO: figure out if script needs to be hosted or in venv to run continuously
-# TODO: finish this damn bot...
+# TODO: need to clean up code where ever i can
 
 ### Global Variables ###
 # Time interval for tweets (one per day - every 24 hours)
 INTERVAL = 60 * 60 * 24
+
 # set up OAuth and integrate with API; twitter test
+redirect_uri = "http://localhost:8080"
 auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
 auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
 tweepy_api = tweepy.API(auth)
 
-credentials = SpotifyClientCredentials(client_id=SPOTIFY_CLIENT_ID, client_secret=SPOTIFY_CLIENT_SECRET)
-
-token = credentials.get_access_token()
-sp = spotipy.Spotify(auth=token)
-
 user_uri = 'spotify:user:1250284673'
+username = user_uri.split(':')[2]
+
+sp = spotipy.Spotify(auth_manager=spotipy.SpotifyOAuth(
+                                                    username=username,
+                                                    client_id=SPOTIFY_CLIENT_ID,
+                                                    client_secret=SPOTIFY_CLIENT_SECRET,
+                                                    redirect_uri=redirect_uri,
+                                                    scope='playlist-modify-public'))
+
+# playlist used for final version
 # playlist_uri = 'spotify:playlist:2AVp8hX9Xaiqg9xv8qp68v'
 # playlist to test if limit condition will be performed
 playlist_uri = 'spotify:playlist:4CneB3XScAKgQseSXey2Yx'
+at_uri = 'spotify:playlist:3b64drC4E4qkcmiOs3cJaQ'
 
-username = user_uri.split(':')[2]
 playlist_id = playlist_uri.split(':')[2]
+at_id = at_uri.split(':')[2]
 
 class SpotifyTwitterBot:
 
-    # this counter will keep track of number of songs that have already been tweeted
-    # will be compared to number of songs in playlist to know when bot will stop running
+    def __init__(self):
+        self.twitter_playlist = sp.user_playlist(username,playlist_id)
+        self.at_playlist = sp.user_playlist(username,at_id)
 
-    FIELD_NAMES = ['song_title', 'song_uri']
-
-    def __init__(self, tweeted_file, twitter_playlist):
-        self.tweeted_file = tweeted_file
-        self.twitter_playlist = twitter_playlist
-        self.song_counter = 0
-            
-    # method to check if song has been tweeted
-    # checks with csv that contains list of already tweeted songs
-    def tweeted_check(self, track_name, track_uri):
-        if os.path.isfile(self.tweeted_file):
-            tweeted_reader = csv.DictReader(open(self.tweeted_file), delimiter=',')
-            values = []
-            for row in tweeted_reader: # going to test getting just values of dict for tweeted check
-                values.append(row['song_uri']) # only retrieves uris of previously tweeted songs
-                self.song_counter += 1
-            if track_uri in values:
-                self.song_counter = 0
-                return True
-            else:
-                print("Writing to already_tweeted_test.csv...")
-                with open(self.tweeted_file, 'a',newline='') as tweeted_csv:
-                    tweeted_writer = csv.DictWriter(tweeted_csv, fieldnames=self.FIELD_NAMES)
-                    tweeted_writer.writerow({'song_title' : track_name, 'song_uri' : track_uri})
-                self.song_counter += 1
+    def tweeted_check2(self, item):
+        if any(song['track']['uri'] == item['track']['uri'] for song in self.at_playlist['tracks']['items']):
+            return True
         else:
-            print("Creating already_tweeted_test.csv...")
-            with open(self.tweeted_file, 'w', newline='') as tweeted_csv:
-                tweeted_writer = csv.DictWriter(tweeted_csv, fieldnames=self.FIELD_NAMES)
-                tweeted_writer.writeheader()
-                tweeted_writer.writerow({'song_title' : track_name, 'song_uri' : track_uri})
-            self.song_counter = 1
+            print("Adding song to Tweeted playlist...")
+            print(item['track']['uri'])
+            sp.user_playlist_add_tracks(username, at_id, [item['track']['uri']]) # need to test
         return False
-
 
     # retrieves random song from playlist to send to tweet
     def get_random_song(self):
+        sp = spotipy.Spotify(auth_manager=spotipy.SpotifyOAuth(
+                                                    username=username,
+                                                    client_id=SPOTIFY_CLIENT_ID,
+                                                    client_secret=SPOTIFY_CLIENT_SECRET,
+                                                    redirect_uri=redirect_uri,
+                                                    scope='playlist-modify-public'))
+
+
         self.twitter_playlist = sp.user_playlist(username, playlist_id) # retrieve most recent version of playlist
+        self.at_playlist = sp.user_playlist(username, at_id) # retrieve most recent version of TWEETED playlist
         tracks = self.twitter_playlist['tracks']
 
         item = random.choice(tracks['items'])
 
-        # retrieves different song until song has not been found in already_tweeted file
-        while self.tweeted_check(item['track']['name'], item['track']['uri']):
+        # need to test using already tweeted playlist
+        while self.tweeted_check2(item):
             print("Already tweeted. Searching again...")
             item = random.choice(tracks['items'])
         
         # composes string to send for tweet
         tweet_string = "sotd: {0} by {1}\n{2}".format(item['track']['name'], item['track']['artists'][0]['name'], item['track']['external_urls']['spotify'])
         print(tweet_string)
-        print("number of songs already tweeted: {0} out of {1} songs".format(self.song_counter, tracks['total']))
+        self.at_playlist = sp.user_playlist(username, at_id)
+        print("number of songs already tweeted: {0} out of {1} songs".format(self.at_playlist['tracks']['total'], tracks['total']))
 
-        # tweepy_api.update_status(status=tweet_string) # need to test if this will tweet...
+        tweepy_api.update_status(status=tweet_string)
 
         # return tweet_string
-    
 
 def main():
-    
-    tweeted_file = os.path.join(os.getcwd(), 'already_tweeted_test.csv')
-    twitter_playlist = sp.user_playlist(username, playlist_id)
-    bot1 = SpotifyTwitterBot(tweeted_file, twitter_playlist)
-    # interval = 60 * 60 * 24
-    test_interval = 10
 
-    # hopefully this will be the loop that allows the bot to tweet once per day
-    # until all songs have been tweeted
-    while bot1.song_counter <= bot1.twitter_playlist['tracks']['total']:
-        bot1.get_random_song() # testing
+    bot1 = SpotifyTwitterBot()
+    test_interval = 60 * 10 # 10 minute interval
+    test_interval2 = 60 * 60 * 6 # 6 hour interval
+
+    while bot1.at_playlist['tracks']['total'] <= bot1.twitter_playlist['tracks']['total']:
+        bot1.get_random_song()
         time.sleep(test_interval)
-        if bot1.song_counter == bot1.twitter_playlist['tracks']['total']:
+        # time.sleep(INTERVAL)
+        if bot1.at_playlist['tracks']['total'] == bot1.twitter_playlist['tracks']['total']:
             break
-        bot1.song_counter = 0
 
-    if bot1.song_counter >= bot1.twitter_playlist['tracks']['total']:
+    if bot1.at_playlist['tracks']['total'] >= bot1.twitter_playlist['tracks']['total']:
         tweet_string = "all songs from this playlist have been tweeted! thanks for the good time... \U0000270C"
     
     print(tweet_string)
-    
-
+    tweepy_api.update_status(tweet_string)
 
 if __name__ == '__main__':
     main()
