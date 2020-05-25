@@ -8,18 +8,18 @@ import spotipy
 from spotipy import oauth2
 import spotipy.util as util
 from spotipy.oauth2 import SpotifyClientCredentials
-# from credentials import *
+from credentials import *
 from os import environ
 
 # for heroku integration
-CONSUMER_KEY = environ['CONSUMER_KEY']
-CONSUMER_SECRET = environ['CONSUMER_SECRET']
-ACCESS_TOKEN = environ['ACCESS_TOKEN']
-ACCESS_TOKEN_SECRET = environ['ACCESS_TOKEN_SECRET']
-SPOTIFY_CLIENT_ID = environ['SPOTIFY_CLIENT_ID']
-SPOTIFY_CLIENT_SECRET = environ['SPOTIFY_CLIENT_SECRET']
+# CONSUMER_KEY = environ['CONSUMER_KEY']
+# CONSUMER_SECRET = environ['CONSUMER_SECRET']
+# ACCESS_TOKEN = environ['ACCESS_TOKEN']
+# ACCESS_TOKEN_SECRET = environ['ACCESS_TOKEN_SECRET']
+# SPOTIFY_CLIENT_ID = environ['SPOTIFY_CLIENT_ID']
+# SPOTIFY_CLIENT_SECRET = environ['SPOTIFY_CLIENT_SECRET']
 
-# TODO: figure out if script needs to be hosted or in venv to run continuously
+# TODO: figure out spotify authorization thru heroku problem
 # TODO: need to clean up code where ever i can
 
 ### Global Variables ###
@@ -34,6 +34,7 @@ tweepy_api = tweepy.API(auth)
 
 user_uri = 'spotify:user:1250284673'
 username = user_uri.split(':')[2]
+scope = 'playlist-modify-public'
 
 sp = spotipy.Spotify(auth_manager=spotipy.SpotifyOAuth(
                                                     username=username,
@@ -51,7 +52,30 @@ at_uri = 'spotify:playlist:3b64drC4E4qkcmiOs3cJaQ'
 playlist_id = playlist_uri.split(':')[2]
 at_id = at_uri.split(':')[2]
 
+# testing
+# def get_token():
+#     try:
+#         token = util.prompt_for_user_token(username, scope)
+#         environ['SPOTIPY_CACHE'] = '.cache-{username}'
+#         if token:
+#             sp = spotipy.Spotify(auth=token)
+#             sp.trace = False
+#             return sp
+#         else:
+#             print("Can't get token for", username)
+#     except:
+#         os.remove(f".cache-{username}")
+#         token = util.prompt_for_user_token(username, scope)
+#         if token:
+#             sp = spotipy.Spotify(auth=token)
+#             sp.trace = False
+#             return sp
+#         else:
+#             print("Can't get token for", username)
+
 class SpotifyTwitterBot:
+
+    # sp = get_token()
 
     def __init__(self):
         self.twitter_playlist = sp.user_playlist(username,playlist_id)
@@ -75,6 +99,7 @@ class SpotifyTwitterBot:
                                                     redirect_uri=redirect_uri,
                                                     scope='playlist-modify-public'))
 
+        # sp = get_token()
 
         self.twitter_playlist = sp.user_playlist(username, playlist_id) # retrieve most recent version of playlist
         self.at_playlist = sp.user_playlist(username, at_id) # retrieve most recent version of TWEETED playlist
@@ -100,13 +125,14 @@ class SpotifyTwitterBot:
 def main():
 
     bot1 = SpotifyTwitterBot()
-    test_interval = 60 * 10 # 10 minute interval
-    test_interval2 = 60 * 60 * 6 # 6 hour interval
+    test_interval = 60 # 60 sec interval (for testing w heroku to see behavior)
+    # test_interval = 60 * 10 # 10 minute interval
+    # test_interval2 = 60 * 60 * 6 # 6 hour interval
 
     while bot1.at_playlist['tracks']['total'] <= bot1.twitter_playlist['tracks']['total']:
         bot1.get_random_song()
         # time.sleep(test_interval)
-        time.sleep(test_interval2) # time interval to test with heroku deployment
+        time.sleep(test_interval) # time interval to test with heroku deployment
         # time.sleep(INTERVAL)
         if bot1.at_playlist['tracks']['total'] == bot1.twitter_playlist['tracks']['total']:
             break
