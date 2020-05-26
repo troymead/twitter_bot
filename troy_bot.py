@@ -8,16 +8,16 @@ import spotipy
 from spotipy import oauth2
 import spotipy.util as util
 from spotipy.oauth2 import SpotifyClientCredentials
-from credentials import *
+# from credentials import *
 from os import environ
 
 # for heroku integration
-# CONSUMER_KEY = environ['CONSUMER_KEY']
-# CONSUMER_SECRET = environ['CONSUMER_SECRET']
-# ACCESS_TOKEN = environ['ACCESS_TOKEN']
-# ACCESS_TOKEN_SECRET = environ['ACCESS_TOKEN_SECRET']
-# SPOTIFY_CLIENT_ID = environ['SPOTIFY_CLIENT_ID']
-# SPOTIFY_CLIENT_SECRET = environ['SPOTIFY_CLIENT_SECRET']
+CONSUMER_KEY = environ['CONSUMER_KEY']
+CONSUMER_SECRET = environ['CONSUMER_SECRET']
+ACCESS_TOKEN = environ['ACCESS_TOKEN']
+ACCESS_TOKEN_SECRET = environ['ACCESS_TOKEN_SECRET']
+SPOTIFY_CLIENT_ID = environ['SPOTIFY_CLIENT_ID']
+SPOTIFY_CLIENT_SECRET = environ['SPOTIFY_CLIENT_SECRET']
 
 # TODO: figure out spotify authorization thru heroku problem
 # TODO: need to clean up code where ever i can
@@ -125,8 +125,8 @@ class SpotifyTwitterBot:
 def main():
 
     bot1 = SpotifyTwitterBot()
-    test_interval = 60 # 60 sec interval (for testing w heroku to see behavior)
-    # test_interval = 60 * 10 # 10 minute interval
+    # test_interval = 60 # 60 sec interval (for testing w heroku to see behavior)
+    test_interval = 60 * 10 # 10 minute interval
     # test_interval2 = 60 * 60 * 6 # 6 hour interval
 
     while bot1.at_playlist['tracks']['total'] <= bot1.twitter_playlist['tracks']['total']:
