@@ -2,7 +2,7 @@ import random
 import spotipy
 from spotipy import oauth2
 import spotipy.util as util
-from spotipy.oauth2 import SpotifyOAuth
+from spotipy.oauth2 import SpotifyOAuth, SpotifyClientCredentials
 from os import environ
 
 SPOTIFY_CLIENT_ID = environ['SPOTIFY_CLIENT_ID']
@@ -27,7 +27,8 @@ def get_random_song():
     # )
 
     # sp = spotipy.Spotify(auth=token)
-    sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope)) # need to test with heroku
+    sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=SPOTIFY_CLIENT_ID,
+                                                           client_secret=SPOTIFY_CLIENT_SECRET)) # need to test with heroku
 
     # twitter_playlist = sp.user_playlist(username, playlist_id)
     twitter_playlist = sp.playlist_items(playlist_id)
