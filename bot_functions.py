@@ -4,7 +4,6 @@ from spotipy import oauth2
 import spotipy.util as util
 from spotipy.oauth2 import SpotifyOAuth, SpotifyClientCredentials
 from os import environ
-# from credentials import *
 
 SPOTIFY_CLIENT_ID = environ['SPOTIFY_CLIENT_ID']
 SPOTIFY_CLIENT_SECRET = environ['SPOTIFY_CLIENT_SECRET']
@@ -34,21 +33,16 @@ def get_random_song():
     #                                                        scope=scope
     #                                                        )) # need to test with heroku
 
-    # twitter_playlist = sp.user_playlist(username, playlist_id)
     twitter_playlist = sp.playlist_items(playlist_id)
-    # print(twitter_playlist) # testing
     
 
     if twitter_playlist['total'] == 0:
         return [False]
     else:
-        # song = random.choice(tracks['items'])
         tracks = twitter_playlist['items']
         song = random.choice(tracks)
 
-        # sp.user_playlist_add_tracks(username, at_id, [song['track']['uri']])
         sp.playlist_add_items(at_id, [song['track']['uri']])
-        # sp.user_playlist_remove_all_occurrences_of_tracks(username, playlist_id, [song['track']['uri']])
         sp.playlist_remove_all_occurrences_of_items(playlist_id, [song['track']['uri']])
 
         return [True, song['track']]
