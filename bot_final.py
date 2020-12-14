@@ -16,7 +16,7 @@ ACCESS_TOKEN_SECRET = environ['ACCESS_TOKEN_SECRET']
 # Time interval for tweets (one per day - every 24 hours)
 # INTERVAL = 60 * 60 * 24
 INTERVAL = 60 * 5 # heroku deploy test interval
-# INTERVAL = 60 # for local testing
+# INTERVAL = 30 # for local testing
 
 # set up OAuth and integrate with API; twitter test
 auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)

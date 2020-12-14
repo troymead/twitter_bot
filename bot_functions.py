@@ -4,6 +4,7 @@ from spotipy import oauth2
 import spotipy.util as util
 from spotipy.oauth2 import SpotifyOAuth, SpotifyClientCredentials
 from os import environ
+# from credentials import *
 
 SPOTIFY_CLIENT_ID = environ['SPOTIFY_CLIENT_ID']
 SPOTIFY_CLIENT_SECRET = environ['SPOTIFY_CLIENT_SECRET']
@@ -18,20 +19,20 @@ def get_random_song():
     playlist_id = 'spotify:playlist:7B0w4UowILfFDuWJQvwC6c'.split(':')[2]
     at_id = 'spotify:playlist:3b64drC4E4qkcmiOs3cJaQ'.split(':')[2]
 
-    token = util.prompt_for_user_token(
-        username=username,
-        scope=scope,
-        client_id=SPOTIFY_CLIENT_ID,
-        client_secret=SPOTIFY_CLIENT_SECRET,
-        redirect_uri=redirect_uri
-    )
+    # token = util.prompt_for_user_token(
+    #     username=username,
+    #     scope=scope,
+    #     client_id=SPOTIFY_CLIENT_ID,
+    #     client_secret=SPOTIFY_CLIENT_SECRET,
+    #     redirect_uri=redirect_uri
+    # )
 
-    sp = spotipy.Spotify(auth=token)
-    # sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id=SPOTIFY_CLIENT_ID,
-    #                                                        client_secret=SPOTIFY_CLIENT_SECRET,
-    #                                                        redirect_uri=redirect_uri,
-    #                                                        scope=scope
-    #                                                        )) # need to test with heroku
+    # sp = spotipy.Spotify(auth=token)
+    sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id=SPOTIFY_CLIENT_ID,
+                                                           client_secret=SPOTIFY_CLIENT_SECRET,
+                                                           redirect_uri=redirect_uri,
+                                                           scope=scope
+                                                           )) # need to test with heroku
 
     twitter_playlist = sp.playlist_items(playlist_id)
     
