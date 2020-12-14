@@ -1,2 +1,2 @@
-worker: python troy_bot.py
+worker: python bot_final.py
 web: python server.py
