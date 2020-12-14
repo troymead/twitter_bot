@@ -4,7 +4,6 @@ from spotipy import oauth2
 import spotipy.util as util
 from spotipy.oauth2 import SpotifyOAuth, SpotifyClientCredentials
 from os import environ
-# from credentials import *
 
 SPOTIFY_CLIENT_ID = environ['SPOTIFY_CLIENT_ID']
 SPOTIFY_CLIENT_SECRET = environ['SPOTIFY_CLIENT_SECRET']

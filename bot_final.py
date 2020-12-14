@@ -5,7 +5,6 @@ import random
 import tweepy
 from os import environ
 from bot_functions import get_random_song, get_tweet
-# from credentials import *
 
 # for heroku integration
 CONSUMER_KEY = environ['CONSUMER_KEY']
