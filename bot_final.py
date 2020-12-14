@@ -5,6 +5,7 @@ import random
 import tweepy
 from os import environ
 from bot_functions import get_random_song, get_tweet
+# from credentials import *
 
 # for heroku integration
 CONSUMER_KEY = environ['CONSUMER_KEY']
@@ -31,5 +32,5 @@ while not_empty:
     song = get_tweet(get_random_song())
     not_empty = song[0]
     tweepy_api.update_status(song[1]) # for final
-    # print(song[1]) # for local testing
+    print(song[1]) # for local testing
     time.sleep(INTERVAL)
