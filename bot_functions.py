@@ -5,8 +5,8 @@ import spotipy.util as util
 from spotipy.oauth2 import SpotifyOAuth
 from os import environ
 
-# SPOTIFY_CLIENT_ID = environ['SPOTIFY_CLIENT_ID']
-# SPOTIFY_CLIENT_SECRET = environ['SPOTIFY_CLIENT_SECRET']
+SPOTIFY_CLIENT_ID = environ['SPOTIFY_CLIENT_ID']
+SPOTIFY_CLIENT_SECRET = environ['SPOTIFY_CLIENT_SECRET']
 username = 'spotify:user:1250284673'.split(':')[2]
 scope = 'playlist-modify-public'
 # redirect_uri = "http://localhost:8080"
