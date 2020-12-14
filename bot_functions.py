@@ -19,15 +19,6 @@ def get_random_song():
     playlist_id = 'spotify:playlist:7B0w4UowILfFDuWJQvwC6c'.split(':')[2]
     at_id = 'spotify:playlist:3b64drC4E4qkcmiOs3cJaQ'.split(':')[2]
 
-    # token = util.prompt_for_user_token(
-    #     username=username,
-    #     scope=scope,
-    #     client_id=SPOTIFY_CLIENT_ID,
-    #     client_secret=SPOTIFY_CLIENT_SECRET,
-    #     redirect_uri=redirect_uri
-    # )
-
-    # sp = spotipy.Spotify(auth=token)
     sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id=SPOTIFY_CLIENT_ID,
                                                            client_secret=SPOTIFY_CLIENT_SECRET,
                                                            redirect_uri=redirect_uri,
@@ -51,7 +42,7 @@ def get_random_song():
 def get_tweet(song):
 
     if song[0] == False:
-        tweet_string = "[testing] all songs from this playlist have been tweeted! thanks for the good time... \U0000270C"
+        tweet_string = "[testing] all songs from this playlist have been tweeted! thanks for the good time... \U0001F3FD"
     else:
         tweet_string = "[testing] sotd: {0} by {1}\n{2}".format(song[1]['name'], song[1]['artists'][0]['name'], song[1]['external_urls']['spotify'])
     

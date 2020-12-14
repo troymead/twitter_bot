@@ -15,7 +15,7 @@ ACCESS_TOKEN_SECRET = environ['ACCESS_TOKEN_SECRET']
 
 # Time interval for tweets (one per day - every 24 hours)
 # INTERVAL = 60 * 60 * 24
-INTERVAL = 60 * 5 # heroku deploy test interval
+INTERVAL = 60 * 30 # heroku deploy test interval
 # INTERVAL = 30 # for local testing
 
 # set up OAuth and integrate with API; twitter test
@@ -31,5 +31,5 @@ while not_empty:
     song = get_tweet(get_random_song())
     not_empty = song[0]
     tweepy_api.update_status(song[1]) # for final
-    # print(song[1]) # for local testing
-    time.sleep(INTERVAL)
+    if not_empty:
+        time.sleep(INTERVAL)
