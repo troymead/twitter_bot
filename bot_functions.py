@@ -2,14 +2,15 @@ import random
 import spotipy
 from spotipy import oauth2
 import spotipy.util as util
-from spotipy.oauth2 import SpotifyClientCredentials
+from spotipy.oauth2 import SpotifyOAuth
 from os import environ
 
-SPOTIFY_CLIENT_ID = environ['SPOTIFY_CLIENT_ID']
-SPOTIFY_CLIENT_SECRET = environ['SPOTIFY_CLIENT_SECRET']
+# SPOTIFY_CLIENT_ID = environ['SPOTIFY_CLIENT_ID']
+# SPOTIFY_CLIENT_SECRET = environ['SPOTIFY_CLIENT_SECRET']
 username = 'spotify:user:1250284673'.split(':')[2]
 scope = 'playlist-modify-public'
-redirect_uri = "http://localhost:8080"
+# redirect_uri = "http://localhost:8080"
+# redirect_uri = environ['REDIRECT_URI']
 
 def get_random_song():
     # playlist_id = 'spotify:playlist:4CneB3XScAKgQseSXey2Yx'.split(':')[2]
@@ -17,17 +18,19 @@ def get_random_song():
     playlist_id = 'spotify:playlist:7B0w4UowILfFDuWJQvwC6c'.split(':')[2]
     at_id = 'spotify:playlist:3b64drC4E4qkcmiOs3cJaQ'.split(':')[2]
 
-    token = util.prompt_for_user_token(
-        username=username,
-        scope=scope,
-        client_id=SPOTIFY_CLIENT_ID,
-        client_secret=SPOTIFY_CLIENT_SECRET,
-        redirect_uri=redirect_uri
-    )
+    # token = util.prompt_for_user_token(
+    #     username=username,
+    #     scope=scope,
+    #     client_id=SPOTIFY_CLIENT_ID,
+    #     client_secret=SPOTIFY_CLIENT_SECRET,
+    #     redirect_uri=redirect_uri
+    # )
 
-    sp = spotipy.Spotify(auth=token)
+    # sp = spotipy.Spotify(auth=token)
+    sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope)) # need to test with heroku
 
-    twitter_playlist = sp.user_playlist(username, playlist_id)
+    # twitter_playlist = sp.user_playlist(username, playlist_id)
+    twitter_playlist = sp.playlist_items(playlist_id)
     tracks = twitter_playlist['tracks']
 
     if twitter_playlist['tracks']['total'] == 0:
@@ -35,8 +38,10 @@ def get_random_song():
     else:
         song = random.choice(tracks['items'])
 
-        sp.user_playlist_add_tracks(username, at_id, [song['track']['uri']])
-        sp.user_playlist_remove_all_occurrences_of_tracks(username, playlist_id, [song['track']['uri']])
+        # sp.user_playlist_add_tracks(username, at_id, [song['track']['uri']])
+        sp.playlist_add_items(at_id, [song['track']['uri']])
+        # sp.user_playlist_remove_all_occurrences_of_tracks(username, playlist_id, [song['track']['uri']])
+        sp.playlist_remove_all_occurrences_of_items(playlist_id, [song['track']['uri']])
 
         return [True, song['track']]
 

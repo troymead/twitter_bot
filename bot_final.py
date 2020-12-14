@@ -18,7 +18,7 @@ INTERVAL = 60 * 5 # heroku deploy test interval
 # INTERVAL = 60 # for local testing
 
 # set up OAuth and integrate with API; twitter test
-redirect_uri = "http://localhost:8080"
+# redirect_uri = "http://localhost:8080"
 auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
 auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
 tweepy_api = tweepy.API(auth)
