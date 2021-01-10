@@ -3,6 +3,7 @@ import os
 import time
 import random
 import tweepy
+from datetime import datetime
 from os import environ
 from bot_functions import get_random_song, get_tweet
 from apscheduler.schedulers.blocking import BlockingScheduler
@@ -29,7 +30,7 @@ sched = BlockingScheduler()
 
 # @sched.scheduled_job('cron', day_of_week='', hour=)
 # for testing:
-@sched.scheduled_job('interval', minutes=45)
+@sched.scheduled_job('interval', hours=1, start_date=datetime.now())
 def once_day():
     print('Preparing to retrieve song to tweet...')
     song = get_tweet(get_random_song())
@@ -41,6 +42,8 @@ def once_day():
         tweepy_api.update_status(song[1]) # for final
         # sched.shutdown(wait=False)
     else:
+        print(song[1])
+        tweepy_api.update_status(song[1]) # for final
         sched.shutdown(wait=False)
 
 sched.start()
