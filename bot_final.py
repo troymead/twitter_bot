@@ -29,14 +29,18 @@ sched = BlockingScheduler()
 
 # @sched.scheduled_job('cron', day_of_week='', hour=)
 # for testing:
-@sched.scheduled_job('interval', minutes=5)
+@sched.scheduled_job('interval', minutes=45)
 def once_day():
     print('Preparing to retrieve song to tweet...')
     song = get_tweet(get_random_song())
     not_empty = song[0]
     print(song[1])
 
-    if (not_empty == False):
+    if (not_empty):
+        print(song[1])
+        tweepy_api.update_status(song[1]) # for final
+        # sched.shutdown(wait=False)
+    else:
         sched.shutdown(wait=False)
 
 sched.start()
