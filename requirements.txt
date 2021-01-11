@@ -1,4 +1,4 @@
-APScheduler==3.0.0
+APScheduler==3.6.3
 astroid==2.3.1
 beautifulsoup4==4.6.3
 bs4==0.0.1
@@ -41,6 +41,7 @@ spotipy==2.16.1
 threadpoolctl==2.1.0
 tweepy==3.9.0
 typed-ast==1.4.0
+tzlocal==2.1
 urllib3==1.23
 virtualenv==16.0.0
 Werkzeug==1.0.1
