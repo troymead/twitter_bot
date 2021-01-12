@@ -21,10 +21,7 @@ tweepy_api = tweepy.API(auth)
 
 sched = BlockingScheduler()
 
-# for testing:
-# @sched.scheduled_job('interval', minutes=5, start_date=datetime.now())
-# @sched.scheduled_job('cron',  hour='10,22', timezone='UTC')
-@sched.scheduled_job('cron',  hour='3,17', timezone='UTC') #for testing
+@sched.scheduled_job('cron',  hour='3,15', timezone='UTC')
 def once_day():
     print('Preparing to retrieve song to tweet...')
     song = get_tweet(get_random_song())
