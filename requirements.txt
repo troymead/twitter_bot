@@ -20,7 +20,7 @@ lazy-object-proxy==1.4.1
 MarkupSafe==1.1.1
 matplotlib==3.3.2
 mccabe==0.6.1
-numpy==1.19.4
+numpy==1.22.0
 oauthlib==2.1.0
 pandas==1.1.4
 Pillow==8.0.1
